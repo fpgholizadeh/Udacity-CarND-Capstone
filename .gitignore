@@ -1,4 +1,6 @@
 *.py[cod]
+*.bag
+*.csv
 
 build
 devel
