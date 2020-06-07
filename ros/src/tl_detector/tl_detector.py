@@ -30,6 +30,7 @@ class TLDetector(object):
         /traffic_waypoints: returns the idx of the waypoint for nearest red light stop line.
 
         """
+        print("[TL-Detector] Initializing TLDetector ......")
         rospy.init_node("tl_detector")
 
         self.pose = None

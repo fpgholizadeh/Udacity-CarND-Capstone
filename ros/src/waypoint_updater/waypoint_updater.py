@@ -10,29 +10,25 @@ import numpy as np
 
 import math
 
-'''
+"""
 This node will publish waypoints from the car's current position to some `x` distance ahead.
-
 As mentioned in the doc, you should ideally first implement a version which does not care
 about traffic lights or obstacles.
-
 Once you have created dbw_node, you will update this node to use the status of traffic lights too.
-
 Please note that our simulator also provides the exact location of traffic lights and their
 current status in `/vehicle/traffic_lights` message. You can use this message to build this node
 as well as to verify your TL classifier.
-
 TODO (for Yousuf and Aaron): Stopline location for each traffic light.
-'''
+"""
 
 LOOKAHEAD_WPS = 200  # Number of waypoints we will publish. You can change this number
-MAX_DECEL = .5
+MAX_DECEL = 0.5
 
 
 class WaypointUpdater(object):
     def __init__(self):
 
-        rospy.init_node('waypoint_updater')
+        rospy.init_node("waypoint_updater")
 
         # Member variables definition
         self.pose = None
@@ -45,16 +41,17 @@ class WaypointUpdater(object):
         #####################
         # Subscribers
         #####################
-        rospy.Subscriber('/current_pose', PoseStamped, self.pose_cb)
-        rospy.Subscriber('/base_waypoints', Lane, self.waypoints_cb)
+        rospy.Subscriber("/current_pose", PoseStamped, self.pose_cb)
+        rospy.Subscriber("/base_waypoints", Lane, self.waypoints_cb)
 
         # TODO: Add a subscriber for /traffic_waypoint and /obstacle_waypoint below
-        rospy.Subscriber('/traffic_waypoint', Int32, self.traffic_cb)
+        rospy.Subscriber("/traffic_waypoint", Int32, self.traffic_cb)
         #####################
         # Publishers
         #####################
         self.final_waypoints_pub = rospy.Publisher(
-            'final_waypoints', Lane, queue_size=1)
+            "final_waypoints", Lane, queue_size=1
+        )
 
         #  Main loop function call
         self.loop()
@@ -106,8 +103,7 @@ class WaypointUpdater(object):
         if self.stopline_wp_idx == -1 or (self.stopline_wp_idx >= farthest_idx):
             lane.waypoints = base_waypoints
         else:
-            lane.waypoints = self.decelerate_waypoints(
-                base_waypoints, closest_idx)
+            lane.waypoints = self.decelerate_waypoints(base_waypoints, closest_idx)
 
         return lane
 
@@ -126,8 +122,8 @@ class WaypointUpdater(object):
             # Evaluate linear profile
             vel = math.sqrt(2 * MAX_DECEL * dist)
             # If velocity is small enough, just returns 0
-            if vel < 1.:
-                vel = 0.
+            if vel < 1.0:
+                vel = 0.0
 
             # All waypoint velocity is its speed limit so we esnure we never go over that value
             p.twist.twist.linear.x = min(vel, wp.twist.twist.linear.x)
@@ -142,8 +138,10 @@ class WaypointUpdater(object):
         self.base_waypoints = waypoints
         # Since the list of waypoints do not change over time, this check ensures that no computation is made on waypoints every time the callback is called, but just once
         if not self.waypoints_2d:
-            self.waypoints_2d = [[waypoint.pose.pose.position.x,
-                                  waypoint.pose.pose.position.y] for waypoint in waypoints.waypoints]
+            self.waypoints_2d = [
+                [waypoint.pose.pose.position.x, waypoint.pose.pose.position.y]
+                for waypoint in waypoints.waypoints
+            ]
             # Since we will use this structure for nearest point search, KDTree is the best option for that
             self.waypoint_tree = KDTree(self.waypoints_2d)
 
@@ -163,17 +161,19 @@ class WaypointUpdater(object):
     def distance(self, waypoints, wp1, wp2):
         dist = 0
 
-        def dl(a, b): return math.sqrt(
-            (a.x-b.x)**2 + (a.y-b.y)**2 + (a.z-b.z)**2)
-        for i in range(wp1, wp2+1):
-            dist += dl(waypoints[wp1].pose.pose.position,
-                       waypoints[i].pose.pose.position)
+        def dl(a, b):
+            return math.sqrt((a.x - b.x) ** 2 + (a.y - b.y) ** 2 + (a.z - b.z) ** 2)
+
+        for i in range(wp1, wp2 + 1):
+            dist += dl(
+                waypoints[wp1].pose.pose.position, waypoints[i].pose.pose.position
+            )
             wp1 = i
         return dist
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     try:
         WaypointUpdater()
     except rospy.ROSInterruptException:
-        rospy.logerr('Could not start waypoint updater node.')
+        rospy.logerr("Could not start waypoint updater node.")
