@@ -3,6 +3,10 @@
 import rospy
 from geometry_msgs.msg import PoseStamped
 from styx_msgs.msg import Lane, Waypoint
+from scipy.spatial import KDTree
+from std_msgs.msg import Int32
+
+import numpy as np
 
 import math
 
@@ -21,36 +25,130 @@ as well as to verify your TL classifier.
 TODO (for Yousuf and Aaron): Stopline location for each traffic light.
 '''
 
-LOOKAHEAD_WPS = 200 # Number of waypoints we will publish. You can change this number
+LOOKAHEAD_WPS = 200  # Number of waypoints we will publish. You can change this number
+MAX_DECEL = .5
 
 
 class WaypointUpdater(object):
     def __init__(self):
+
         rospy.init_node('waypoint_updater')
 
+        # Member variables definition
+        self.pose = None
+        self.base_waypoints = None
+        self.waypoints_2d = None
+        self.waypoint_tree = None
+        self.base_lane = None
+        self.stopline_wp_idx = -1
+
+        #####################
+        # Subscribers
+        #####################
         rospy.Subscriber('/current_pose', PoseStamped, self.pose_cb)
         rospy.Subscriber('/base_waypoints', Lane, self.waypoints_cb)
 
         # TODO: Add a subscriber for /traffic_waypoint and /obstacle_waypoint below
+        rospy.Subscriber('/traffic_waypoint', Int32, self.traffic_cb)
+        #####################
+        # Publishers
+        #####################
+        self.final_waypoints_pub = rospy.Publisher(
+            'final_waypoints', Lane, queue_size=1)
 
+        #  Main loop function call
+        self.loop()
 
-        self.final_waypoints_pub = rospy.Publisher('final_waypoints', Lane, queue_size=1)
+    def loop(self):
+        # Published data are sent to waypoint_follower that runs at 30Hz
+        rate = rospy.Rate(50)
+        while not rospy.is_shutdown():
+            if self.pose and self.base_waypoints and self.waypoint_tree:
+                self.publish_waypoints()
+            rate.sleep()
 
-        # TODO: Add other member variables you need below
+    def get_closest_waypoint_idx(self):
+        x = self.pose.pose.position.x
+        y = self.pose.pose.position.y
+        # https://docs.scipy.org/doc/scipy-0.14.0/reference/generated/scipy.spatial.KDTree.query.html#scipy.spatial.KDTree.query
+        closest_idx = self.waypoint_tree.query([x, y], 1)[1]
 
-        rospy.spin()
+        # Check if closest waypoint is ahed or behind vehicle
+        # We use closest wp and its previous to no have trouble
+        # when closest wp is at the end of the wp list
+        closest_coord = self.waypoints_2d[closest_idx]
+        prev_coord = self.waypoints_2d[closest_idx - 1]
+
+        # Equation for hyperplane through closest coords
+        cl_vect = np.array(closest_coord)
+        prev_vect = np.array(prev_coord)
+        pos_vect = np.array([x, y])
+
+        val = np.dot(cl_vect - prev_vect, pos_vect - cl_vect)
+
+        if val > 0:
+            closest_idx = (closest_idx + 1) % len(self.waypoints_2d)
+
+        return closest_idx
+
+    def publish_waypoints(self):
+
+        final_lane = self.generate_lane()
+        self.final_waypoints_pub.publish(final_lane)
+
+    def generate_lane(self):
+        lane = Lane()
+
+        closest_idx = self.get_closest_waypoint_idx()
+        farthest_idx = closest_idx + LOOKAHEAD_WPS
+        base_waypoints = self.base_waypoints.waypoints[closest_idx:farthest_idx]
+
+        if self.stopline_wp_idx == -1 or (self.stopline_wp_idx >= farthest_idx):
+            lane.waypoints = base_waypoints
+        else:
+            lane.waypoints = self.decelerate_waypoints(
+                base_waypoints, closest_idx)
+
+        return lane
+
+    def decelerate_waypoints(self, waypoints, closest_idx):
+        # Avoid modification to original constant waypoints
+        temp = list()
+        for i, wp in enumerate(waypoints):
+            p = Waypoint()
+            # Position does not change
+            p.pose = wp.pose
+            STOP_OFFSET = 2
+            # STOP_OFFSET is to stop a little before stop line
+            # otherwise our car would stop with the center on the stop line
+            stop_idx = max(self.stopline_wp_idx - closest_idx - STOP_OFFSET, 0)
+            dist = self.distance(waypoints, i, stop_idx)
+            # Evaluate linear profile
+            vel = math.sqrt(2 * MAX_DECEL * dist)
+            # If velocity is small enough, just returns 0
+            if vel < 1.:
+                vel = 0.
+
+            # All waypoint velocity is its speed limit so we esnure we never go over that value
+            p.twist.twist.linear.x = min(vel, wp.twist.twist.linear.x)
+            temp.append(p)
+
+        return temp
 
     def pose_cb(self, msg):
-        # TODO: Implement
-        pass
+        self.pose = msg
 
     def waypoints_cb(self, waypoints):
-        # TODO: Implement
-        pass
+        self.base_waypoints = waypoints
+        # Since the list of waypoints do not change over time, this check ensures that no computation is made on waypoints every time the callback is called, but just once
+        if not self.waypoints_2d:
+            self.waypoints_2d = [[waypoint.pose.pose.position.x,
+                                  waypoint.pose.pose.position.y] for waypoint in waypoints.waypoints]
+            # Since we will use this structure for nearest point search, KDTree is the best option for that
+            self.waypoint_tree = KDTree(self.waypoints_2d)
 
     def traffic_cb(self, msg):
-        # TODO: Callback for /traffic_waypoint message. Implement
-        pass
+        self.stopline_wp_idx = msg.data
 
     def obstacle_cb(self, msg):
         # TODO: Callback for /obstacle_waypoint message. We will implement it later
@@ -64,9 +162,12 @@ class WaypointUpdater(object):
 
     def distance(self, waypoints, wp1, wp2):
         dist = 0
-        dl = lambda a, b: math.sqrt((a.x-b.x)**2 + (a.y-b.y)**2  + (a.z-b.z)**2)
+
+        def dl(a, b): return math.sqrt(
+            (a.x-b.x)**2 + (a.y-b.y)**2 + (a.z-b.z)**2)
         for i in range(wp1, wp2+1):
-            dist += dl(waypoints[wp1].pose.pose.position, waypoints[i].pose.pose.position)
+            dist += dl(waypoints[wp1].pose.pose.position,
+                       waypoints[i].pose.pose.position)
             wp1 = i
         return dist
 
