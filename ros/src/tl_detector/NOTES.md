@@ -18,3 +18,11 @@
     -> Multi-head:
         1. Model head to find traffic light
         2. Model head to classify color.
+
+
+Building the classifier:
+1. download a free annotated dataset:
+    -> https://hci.iwr.uni-heidelberg.de/content/bosch-small-traffic-lights-dataset
+    -> How to download the data: https://hiro.bsd.uchicago.edu/node/3168
+    -> clone the repo https://github.com/bosch-ros-pkg/bstld
+        -> This repo has the annotation under /label_files

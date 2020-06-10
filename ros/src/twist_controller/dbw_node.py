@@ -28,6 +28,7 @@ that we have created in the `__init__` function.
 
 class DBWNode(object):
     def __init__(self):
+        print("[DBWNode] Initialize DBW Node .........")
         rospy.init_node('dbw_node')
 
         vehicle_mass = rospy.get_param('~vehicle_mass', 1736.35)

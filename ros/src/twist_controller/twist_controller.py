@@ -10,8 +10,10 @@ ONE_MPH = 0.44704
 class Controller(object):
     def __init__(self, vehicle_mass, fuel_capacity, brake_deadband, decel_limit, accel_limit, wheel_radius, wheel_base,
                  steer_ratio, max_lat_accel, max_steer_angle):
+        rospy.logdebug("[Controller] Twist controller ........")
         # Yaw controller
-        self.yaw_controller = YawController(wheel_base, steer_ratio, .1, max_lat_accel, max_steer_angle)
+        self.yaw_controller = YawController(
+            wheel_base, steer_ratio, .1, max_lat_accel, max_steer_angle)
 
         # Throttle controller
         kp = .3
@@ -45,7 +47,8 @@ class Controller(object):
         current_vel = self.vel_lpf.filt(current_vel)
 
         # steering control
-        steer = self.yaw_controller.get_steering(linear_vel, angular_vel, current_vel)
+        steer = self.yaw_controller.get_steering(
+            linear_vel, angular_vel, current_vel)
 
         # throttle control
         vel_error = linear_vel - current_vel
@@ -68,4 +71,5 @@ class Controller(object):
         else:
             brake = 0
 
+        print("throttle, brake, steer: ", throttle, brake, steer)
         return throttle, brake, steer
