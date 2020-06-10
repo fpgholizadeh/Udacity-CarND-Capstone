@@ -13,10 +13,6 @@ import yaml
 
 STATE_COUNT_THRESHOLD = 3
 
-def dummy():
-    
-    print("Hello")
-    
 
 class TLDetector(object):
     def __init__(self):
@@ -34,7 +30,7 @@ class TLDetector(object):
         /traffic_waypoints: returns the idx of the waypoint for nearest red light stop line.
 
         """
-        print("[TL-Detector] Initializing TLDetector ......")
+        rospy.logdebug("[TLDetector] Traffic Light detector ........")
         rospy.init_node("tl_detector")
 
         self.pose = None
@@ -196,8 +192,10 @@ class TLDetector(object):
         if closest_light:
             # find the closest visible traffic light (if one exists)
             state = self.get_light_state(closest_light)
+            print("closest light and state: ", line_wp_idx, state)
             return line_wp_idx, state
 
+        print("closest light and state: ", line_wp_idx, TrafficLight.UNKNOWN)
         self.waypoints = None
         return -1, TrafficLight.UNKNOWN
 

@@ -27,6 +27,7 @@ MAX_DECEL = 0.5
 
 class WaypointUpdater(object):
     def __init__(self):
+        rospy.logdebug("[WaypointUpdater] Waypoint update ........")
 
         rospy.init_node("waypoint_updater")
 
@@ -86,10 +87,11 @@ class WaypointUpdater(object):
         if val > 0:
             closest_idx = (closest_idx + 1) % len(self.waypoints_2d)
 
+        print("[Closest IDX] closest_idx = ", closest_idx)
+
         return closest_idx
 
     def publish_waypoints(self):
-
         final_lane = self.generate_lane()
         self.final_waypoints_pub.publish(final_lane)
 
@@ -103,7 +105,8 @@ class WaypointUpdater(object):
         if self.stopline_wp_idx == -1 or (self.stopline_wp_idx >= farthest_idx):
             lane.waypoints = base_waypoints
         else:
-            lane.waypoints = self.decelerate_waypoints(base_waypoints, closest_idx)
+            lane.waypoints = self.decelerate_waypoints(
+                base_waypoints, closest_idx)
 
         return lane
 
