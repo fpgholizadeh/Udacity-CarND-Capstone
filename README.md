@@ -1,6 +1,6 @@
 This is the project repo for the final project of the Udacity Self-Driving Car Nanodegree: Programming a Real Self-Driving Car. For more information about the project, see the project introduction [here](https://classroom.udacity.com/nanodegrees/nd013/parts/6047fe34-d93c-4f50-8336-b70ef10cb4b2/modules/e1a23b06-329a-4684-a717-ad476f0d8dff/lessons/462c933d-9f24-42d3-8bdc-a08a5fc866e4/concepts/5ab4b122-83e6-436d-850f-9f4d26627fd9).
 
-Please use **one** of the two installation options, either native **or** docker installation.
+Please use **one** of the three installation options.
 
 ### Native Installation
 
@@ -31,6 +31,52 @@ Run the docker file
 ```bash
 docker run -p 4567:4567 -v $PWD:/capstone -v /tmp/log:/root/.ros/ --rm -it capstone
 ```
+
+### Virtual machine
+* Minimum configuration:
+  * 2 CPU
+  * 2 GB system memory
+  * 25 GB of free hard drive space
+
+To set up the environment, perform the following steps:
+1. Download the [Udacity VM image](https://s3-us-west-1.amazonaws.com/udacity-selfdrivingcar/Udacity_VM_Base_V1.0.0.zip). N.B. the password for the *student* user is **udacity-nd**
+2. Import it using VirtualBox
+3. Download the [simulator](https://github.com/udacity/CarND-Capstone/releases) for your host OS
+4. open the port for communication between simulator and ros following the [guide](https://s3-us-west-1.amazonaws.com/udacity-selfdrivingcar/files/Port+Forwarding.pdf)
+
+On the Ubuntu VM
+1. Install virtualenv
+```bash
+sudo apt-get install python3-pip
+sudo pip3 install virtualenv
+```
+2. Create a virtualenv that uses python2.7
+```bash
+virtualenv -p /usr/bin/python2.7 venv
+```
+3. Clone our repo
+```bash
+git clone https://github.com/danyz91/CarND-Capstone.git
+```
+4. Startup the virtualenv
+```bash
+source venv/bin/activate
+```
+5. Downgrade the importlib-resources
+```bash
+pip install importlib-resources==1.0
+```
+6. Install dependencies
+```bash
+pip install -r requirements.txt
+```
+7. Add the following line to the .bashrc
+```bash
+export PYTHONPATH=$PYTHONPATH:/usr/lib/python2.7/dist-packages
+source /home/student/CarND-Capstone/ros/devel/setup.sh
+```
+
+From now on, you can use the virtualenv to run the CarND-Capstone code
 
 ### Port Forwarding
 To set up port forwarding, please refer to the "uWebSocketIO Starter Guide" found in the classroom (see Extended Kalman Filter Project lesson).
