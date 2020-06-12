@@ -88,3 +88,22 @@ Specific to these libraries, the simulator grader and Carla use the following:
 | OpenMP | N/A | N/A |
 
 We are working on a fix to line up the OpenCV versions between the two.
+
+
+
+# Installation
+
+1. Labeling:
+   * git clone https://github.com/tzutalin/labelImg.git
+   * cd labelImg
+   * conda create -n py3 python=3.5
+   * conda activate py3
+   * pip install pyqt5==5.13.2 lxml
+   * make qt5py3
+   * python3 labelImg.py [IMAGE_PATH] [PRE-DEFINED CLASS FILE]
+
+
+References:
+
+Labeling: https://github.com/tzutalin/labelImg
+Voc to Coco converter: https://github.com/roboflow-ai/voc2coco

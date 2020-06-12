@@ -1,7 +1,8 @@
 *.py[cod]
 *.bag
 *.csv
-
+data/*
+*/data
 build
 devel
 
