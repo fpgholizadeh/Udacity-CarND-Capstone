@@ -71,5 +71,4 @@ class Controller(object):
         else:
             brake = 0
 
-        print("throttle, brake, steer: ", throttle, brake, steer)
         return throttle, brake, steer

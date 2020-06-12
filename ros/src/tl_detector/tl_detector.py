@@ -168,8 +168,6 @@ class TLDetector(object):
         if val > 0:
             closest_idx = (closest_idx + 1) % len(self.waypoints_2d)
 
-        print("[Closest IDX] closest_idx = ", closest_idx)
-
         return closest_idx
 
     def get_light_state(self, light):

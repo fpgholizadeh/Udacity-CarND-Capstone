@@ -26,7 +26,6 @@ LOOKAHEAD_WPS = 50  # Number of waypoints we will publish. You can change this n
 MAX_DECEL = .5
 
 
-
 class WaypointUpdater(object):
     def __init__(self):
         rospy.logdebug("[WaypointUpdater] Waypoint update ........")
@@ -88,8 +87,6 @@ class WaypointUpdater(object):
 
         if val > 0:
             closest_idx = (closest_idx + 1) % len(self.waypoints_2d)
-
-        print("[Closest IDX] closest_idx = ", closest_idx)
 
         return closest_idx
 
