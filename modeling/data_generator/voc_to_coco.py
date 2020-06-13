@@ -30,18 +30,9 @@ def get_annpaths(ann_dir_path=None, ann_ids_path=None, ext="", annpaths_list_pat
 
 
 def get_image_info(annotation_root):
-    path = annotation_root.findtext("path")
-    if path is None:
-        filename = annotation_root.findtext("filename")
-    else:
-        filename = os.path.basename(path)
-    img_name = os.path.basename(filename)
-    print("img_name: ", img_name)
-
+    filename = annotation_root.findtext("filename")
     # NOTE: here we make a custom ID
-    img_id = " ".join(img_name.split(" ")[1:]).split(".")[0]
-    print("img_id ", img_id)
-
+    img_id = filename[0:-4]  # removes the .png or .jpg path of the image
     size = annotation_root.find("size")
     width = int(size.findtext("width"))
     height = int(size.findtext("height"))
@@ -78,9 +69,7 @@ def get_coco_annotation_from_obj(obj, label2id):
     return ann
 
 
-def convert_xmls_to_cocojson(
-    annotation_paths, label2id, output_jsonpath, extract_num_from_imgid=True
-):
+def convert_xmls_to_cocojson(annotation_paths, label2id, output_jsonpath):
     output_json_dict = {
         "images": [],
         "type": "instances",
@@ -88,8 +77,6 @@ def convert_xmls_to_cocojson(
         "categories": [],
     }
     bnd_id = 1  # START_BOUNDING_BOX_ID, TODO input as args ?
-    print("Start converting !")
-    print(annotation_paths)
     for a_path in tqdm(annotation_paths):
         ann_tree = ET.parse(a_path)
         ann_root = ann_tree.getroot()
@@ -114,23 +101,21 @@ def convert_xmls_to_cocojson(
         f.write(output_json)
 
 
-def main():
-    annot_xml_dir = "/Users/sardhendu/workspace/udacity-nd/ImageDataset/output_data_voc"
-    label_file = "/Users/sardhendu/workspace/udacity-nd/ImageDataset/output_data_yolo/classes.txt"
+def main(prefix_path):
+    annot_xml_dir = os.path.join(prefix_path, "labels_xml")
+    label_file = os.path.join(os.path.dirname(prefix_path), "classes.txt")
+    output_path = os.path.join(prefix_path, "annotation.json")
     all_paths = [
         os.path.join(annot_xml_dir, i)
         for i in os.listdir(annot_xml_dir)
         if i.endswith("xml")
     ]
-    print(all_paths)
     label2id = get_label2id(labels_path=label_file)
     convert_xmls_to_cocojson(
-        annotation_paths=all_paths,
-        label2id=label2id,
-        output_jsonpath="/Users/sardhendu/workspace/udacity-nd/ImageDataset/output_coco/dataset.json",
-        extract_num_from_imgid=True,
+        annotation_paths=all_paths, label2id=label2id, output_jsonpath=output_path,
     )
 
 
 if __name__ == "__main__":
-    main()
+    prefix_path = "/Users/sardhendu/workspace/udacity-nd/ImageDataset/annotated_dataset/simulator_dataset_rgb/green"
+    main(prefix_path)
