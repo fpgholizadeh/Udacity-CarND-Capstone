@@ -103,7 +103,7 @@ def convert_xmls_to_cocojson(annotation_paths, label2id, output_jsonpath):
 
 def main(prefix_path):
     annot_xml_dir = os.path.join(prefix_path, "labels_xml")
-    label_file = os.path.join(os.path.dirname(prefix_path), "classes.txt")
+    label_file = os.path.join(prefix_path, "classes.txt")
     output_path = os.path.join(prefix_path, "annotation.json")
     all_paths = [
         os.path.join(annot_xml_dir, i)
@@ -117,5 +117,5 @@ def main(prefix_path):
 
 
 if __name__ == "__main__":
-    prefix_path = "/Users/sardhendu/workspace/udacity-nd/ImageDataset/annotated_dataset/simulator_dataset_rgb/green"
+    prefix_path = "/Users/sardhendu/workspace/udacity-nd/ImageDataset/annotated_dataset/simulator_dataset_rgb"
     main(prefix_path)

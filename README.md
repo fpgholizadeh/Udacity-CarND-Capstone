@@ -149,7 +149,14 @@ We are working on a fix to line up the OpenCV versions between the two.
    * python3 labelImg.py [IMAGE_PATH] [PRE-DEFINED CLASS FILE]
 
 
+2. Modeline:
+   * scikit-image
+   *
+
+
 References:
 
 Labeling: https://github.com/tzutalin/labelImg
 Voc to Coco converter: https://github.com/roboflow-ai/voc2coco
+Custom Data to Coco: https://github.com/waspinator/pycococreator
+Modeling: https://github.com/fizyr/keras-retinanet
