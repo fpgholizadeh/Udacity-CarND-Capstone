@@ -86,20 +86,21 @@ class TLDetector(object):
         Returns:
 
         """
-        self.waypoints = waypoints
-        if not self.waypoints_2d:
-            self.waypoints_2d = [
-                [waypoint.pose.pose.position.x, waypoint.pose.pose.position.y]
-                for waypoint in waypoints.waypoints
-            ]
-            # Since we will use this structure for nearest point search, KDTree is the best option for that
-            self.waypoint_tree = KDTree(self.waypoints_2d)
+        while self.waypoint_tree is None:
+            self.waypoints = waypoints
+            if not self.waypoints_2d:
+                self.waypoints_2d = [
+                    [waypoint.pose.pose.position.x, waypoint.pose.pose.position.y]
+                    for waypoint in waypoints.waypoints
+                ]
+                # Since we will use this structure for nearest point search, KDTree is the best option for that
+                self.waypoint_tree = KDTree(self.waypoints_2d)
 
     def traffic_cb(self, msg):
         self.lights = msg.lights
 
         # TODO: For now, the /image_color is not being published so for simulation we simply override call the image_cb method to get the car running and stopping on traffic light.
-        self.image_cb(msg)
+        # self.image_cb(msg)
 
     def image_cb(self, msg):
         """Identifies red lights in the incoming camera image and publishes the index
@@ -135,19 +136,6 @@ class TLDetector(object):
             self.upcoming_red_light_pub.publish(Int32(self.last_wp))
         self.state_count += 1
 
-    # def get_closest_waypoint(self, x, y):
-    #     """Identifies the closest path waypoint to the given position
-    #         https://en.wikipedia.org/wiki/Closest_pair_of_points_problem
-    #     Args:
-    #         pose (Pose): position to match a waypoint to
-    #
-    #     Returns:
-    #         int: index of the closest waypoint in self.waypoints
-    #
-    #     """
-    #     closest_idx = self.waypoint_tree.query([x, y], 1)[1]
-    #     return closest_idx
-
     def get_closest_waypoint(self, x, y):
         # https://docs.scipy.org/doc/scipy-0.14.0/reference/generated/scipy.spatial.KDTree.query.html#scipy.spatial.KDTree.query
         closest_idx = self.waypoint_tree.query([x, y], 1)[1]
@@ -180,17 +168,17 @@ class TLDetector(object):
             int: ID of traffic light color (specified in styx_msgs/TrafficLight)
 
         """
-        # if not self.has_image:
-        #     self.prev_light_loc = None
-        #     return False
-        #
-        # cv_image = self.bridge.imgmsg_to_cv2(self.camera_image, "bgr8")
-        #
+        if not self.has_image:
+            self.prev_light_loc = None
+            return False
+
+        cv_image = self.bridge.imgmsg_to_cv2(self.camera_image, "bgr8")
+
         # # Get classification
-        # # return self.light_classifier.get_classification(cv_image)
+        return self.light_classifier.get_classification(cv_image)
 
         # TODO: Implement logic to call the classifier to get the light color
-        return light.state
+        # return light.state
 
     def process_traffic_lights(self):
         """Finds closest visible traffic light, if one exists, and determines its
@@ -232,6 +220,7 @@ class TLDetector(object):
         if closest_light:
             # find the closest visible traffic light (if one exists)
             state = self.get_light_state(closest_light)
+            print("vstatestate: ", state)
             return line_wp_idx, state
 
         return -1, TrafficLight.UNKNOWN
