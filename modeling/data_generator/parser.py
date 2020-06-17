@@ -1,15 +1,13 @@
 import os
 import cv2
 import numpy as np
-import pandas as pd
-import json
-from pprint import pprint
-from collections import defaultdict
 
+from collections import defaultdict
+import json
 low_res_path = "/Users/sardhendu/workspace/udacity-nd/ImageDataset/dataset_lowres"
 
 
-file_paths = [os.path.join(low_res_path, i) for i in os.listdir(low_res_path)]
+# file_paths = [os.path.join(low_res_path, i) for i in os.listdir(low_res_path)]
 color_dict = {
     "Red": (0, 0, 255),
     "Green": (0, 255, 0),
@@ -21,7 +19,7 @@ label_id_map = {0: "Red", 1: "Yellow", 2: "Green", 3: "Unknown"}
 
 def read_image_rgb(img_path):
     image = cv2.imread(img_path)
-    image = np.array(image, dtype=np.uint8)[::, :-1]
+    image = np.array(image, dtype=np.uint8)[..., ::-1]
     return image
 
 
@@ -34,15 +32,31 @@ def make_dir(path):
         os.makedirs(path)
 
 
-def make_bbox_plots(image, list_of_object_bounds, category_ids):
-    assert len(list_of_object_bounds) == len(category_ids)
+def read_json(path):
+    with open(path, "r") as f:
+        data = json.load(f)
+    return data
+
+
+def write_json(path, data):
+    with open(path, "w") as f:
+        data = json.dump(f)
+    return data
+
+
+def make_bbox_plots(image, list_of_object_bounds, category_ids, bounds_type="poly"):
+    assert len(list_of_object_bounds) == len(category_ids), ("{} != {}".format(
+        len(list_of_object_bounds), len(category_ids)))
     for bbox, cat_id in zip(list_of_object_bounds, category_ids):
+        if bounds_type == "bbox":
+            x1, y1, x2, y2 = bbox
+            poly = np.array(
+                [[x1, y1], [x2, y1], [x2, y2], [x1, y2], [x1, y1]], dtype=np.int32
+            )
+        else:
+            poly = np.array(bbox, dtype=np.int32)
         cv2.polylines(
-            image,
-            [np.array(bbox, dtype=np.int32)],
-            True,
-            color_dict[label_id_map[cat_id]],
-            1,
+            image, [poly], True, color_dict[label_id_map[cat_id]], 4,
         )
     return image
 
@@ -82,12 +96,14 @@ def parse_get_bbox(coco_like_annotation_path, img_dir):
     with open(coco_like_annotation_path, "r") as file:
         annotation_dict = json.load(file)
 
+    label_cnt = {0: 0, 1: 0, 2: 0, 3: 0}
     annot_dict_per_image = defaultdict(lambda: defaultdict(list))
     for annotation in annotation_dict["annotations"]:
         x1, y1, w, h = annotation["bbox"]
         x2 = x1 + w
         y2 = y1 + h
         label = annotation["category_id"] - 1  # Substract 1 to make it 0, n-1
+        label_cnt[label] += 1
         annot_dict_per_image[annotation["image_id"]]["bbox"].append(
             [[x1, y1], [x2, y1], [x2, y2], [x1, y2], [x1, y1]]
         )
@@ -99,7 +115,16 @@ def parse_get_bbox(coco_like_annotation_path, img_dir):
         annot_dict_per_image[image_meta["id"]]["path"] = path
 
     print("Total length of metadata = ", len(annot_dict_per_image))
-    validate_data(annot_dict_per_image, 10)
+    validate_data(annot_dict_per_image, 918)
+    print(
+        "Stats: "
+        "\n\tLabel : Red: {}"
+        "\n\tLabel : Yellow: {}"
+        "\n\tLabel : Green: {}"
+        "\n\tLabel : Unknown: {}".format(
+            label_cnt[0], label_cnt[1], label_cnt[2], label_cnt[3]
+        )
+    )
 
 
 def run(data_json_path):
@@ -116,7 +141,7 @@ def run(data_json_path):
 
 
 if __name__ == "__main__":
-    prefix_path = "/Users/sardhendu/workspace/udacity-nd/ImageDataset/annotated_dataset/simulator_dataset_rgb/red"
+    prefix_path = "/Users/sardhendu/workspace/udacity-nd/ImageDataset/annotated_dataset/simulator_dataset_rgb"
     data_json_path = os.path.join(prefix_path, "annotation.json")
     img_path = os.path.join(prefix_path, "images")
     # run(data_json_path)
