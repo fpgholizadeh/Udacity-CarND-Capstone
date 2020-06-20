@@ -122,6 +122,7 @@ if __name__ == "__main__":
             color, img = obj_classifier.get_classification(image, debug=debug)
             print("image_name", path_, "color: ", color)
 
-            parser.write_image_rgb(img, "./data/" + path_)
+            parser.write_image_rgb(
+                img, "./data/" + path_)
             if num_ == 2:
                 break
