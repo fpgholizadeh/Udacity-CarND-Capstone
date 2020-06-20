@@ -1,3 +1,34 @@
+
+[//]: # (Image References)
+
+[image1]: ./img/system.png "Generic Description 1" 
+[image2]: ./img/wp.png "Generic Description 2" 
+[image3]: ./img/dbw.png "Generic Description 3" 
+[image4]: ./img/tl.png "Generic Description 4" 
+
+# Capstone Project
+[![Udacity - Self-Driving Car NanoDegree](https://s3.amazonaws.com/udacity-sdc/github/shield-carnd.svg)](http://www.udacity.com/drive)
+
+This repository contains all the code for the final project of Udacity Self Driving Car Nanodegree.
+
+## Overview
+
+In this project the goal is to write ROS nodes to implement core functionality of the autonomous vehicle system, including traffic light detection, control, and waypoint following! 
+
+The code is developed in simulator and then tested on real self-driving car 
+
+
+## Team members
+
+Name | Github Account | Email
+--- | --- | ---
+Danilo Romano (Team Lead) | https://github.com/danyz91 | d.romano991@gmail.com
+Gianluca Mastrorillo | https://github.com/Giangy1990 | mastrorillo.gianluca@gmail.com
+Hossein Gholizadeh  | https://github.com/fpgholizadeh | fpgholizadeh@gmail.com
+Sardhendu Mishra | https://github.com/Sardhendu | sardhendumishra@gmail.com
+
+## Setup
+
 This is the project repo for the final project of the Udacity Self-Driving Car Nanodegree: Programming a Real Self-Driving Car. For more information about the project, see the project introduction [here](https://classroom.udacity.com/nanodegrees/nd013/parts/6047fe34-d93c-4f50-8336-b70ef10cb4b2/modules/e1a23b06-329a-4684-a717-ad476f0d8dff/lessons/462c933d-9f24-42d3-8bdc-a08a5fc866e4/concepts/5ab4b122-83e6-436d-850f-9f4d26627fd9).
 
 Please use **one** of the three installation options.
@@ -81,7 +112,7 @@ From now on, you can use the virtualenv to run the CarND-Capstone code
 ### Port Forwarding
 To set up port forwarding, please refer to the "uWebSocketIO Starter Guide" found in the classroom (see Extended Kalman Filter Project lesson).
 
-### Usage
+## Usage
 
 1. Clone the project repository
 ```bash
@@ -102,7 +133,8 @@ roslaunch launch/styx.launch
 ```
 4. Run the simulator
 
-### Real world testing
+## Real world testing
+
 1. Download [training bag](https://s3-us-west-1.amazonaws.com/udacity-selfdrivingcar/traffic_light_bag_file.zip) that was recorded on the Udacity self-driving car.
 2. Unzip the file
 ```bash
@@ -120,6 +152,7 @@ roslaunch launch/site.launch
 5. Confirm that traffic light detection works on real life images
 
 ### Other library/driver information
+
 Outside of `requirements.txt`, here is information on other driver/library versions used in the simulator and Carla:
 
 Specific to these libraries, the simulator grader and Carla use the following:
@@ -133,11 +166,30 @@ Specific to these libraries, the simulator grader and Carla use the following:
 | OpenCV | 3.2.0-dev | 2.4.8 |
 | OpenMP | N/A | N/A |
 
-We are working on a fix to line up the OpenCV versions between the two.
 
+## System Overview
 
+![alt text][image1]
 
-# Installation
+## ROS Architecture
+
+## Node Design
+
+### Waypoint Updater
+
+![alt text][image2]
+
+### Control
+
+![alt text][image3]
+
+### Traffic Recognition
+
+![alt text][image4]
+
+#### Dataset Annotation
+
+##### Installation
 
 1. Labeling:
    * git clone https://github.com/tzutalin/labelImg.git
@@ -154,9 +206,10 @@ We are working on a fix to line up the OpenCV versions between the two.
    *
 
 
-References:
+#### References:
 
-Labeling: https://github.com/tzutalin/labelImg
-Voc to Coco converter: https://github.com/roboflow-ai/voc2coco
-Custom Data to Coco: https://github.com/waspinator/pycococreator
-Modeling: https://github.com/fizyr/keras-retinanet
+- Labeling: https://github.com/tzutalin/labelImg
+- Voc to Coco converter: https://github.com/roboflow-ai/voc2coco
+- Custom Data to Coco: https://github.com/waspinator/pycococreator
+- Modeling: https://github.com/fizyr/keras-retinanet
+
