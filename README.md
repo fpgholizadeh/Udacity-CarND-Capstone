@@ -193,15 +193,13 @@ Specific to these libraries, the simulator grader and Carla use the following:
 
  ![alt text][backbone]
 
-  *Dataset:* To perform the training, we need to gather reasonable amount of traffic light images from both the simulator and ROSbag file from Carla.
-One can easily run the simulator and take pictures of traffic lights. However, after taking the pictures, they all need to be labeled. The recommended labeling tool is labellmg.
+  ***Dataset:*** To perform the training, we need to gather reasonable amount of traffic light images from both the simulator and ROSbag file from Carla. One can easily run the simulator and take pictures of traffic lights. However, after taking the pictures, they all need to be labeled. The recommended labeling tool is labellmg.
 We ended up using the dataset already created and labeled by [Alex Lechner](https://github.com/alex-lechner/Traffic-Light-Classification). Here you can also find step by step guide on how to prepare the data and labels.
 
-  *Modeling:* Training can be divided into three major parts.
+  ***Modeling:*** Training can be divided into three major parts.
+     * *Data Preparation:* Converting coco-format or XML data to tf-records. We have provided several [parsers](https://github.com/danyz91/CarND-Capstone/tree/master/modeling/data_generator) to easy the creation of tf-records. We would also recommend inside the awesome [step-by-step](https://medium.com/@WuStangDan/step-by-step-tensorflow-object-detection-api-tutorial-part-1-selecting-a-model-a02b6aabe39e) guide by Daniel Stang
 
-    1. Data Preparation: Converting coco-format or XML data to tf-records. We have provided several [parsers](https://github.com/danyz91/CarND-Capstone/tree/master/modeling/data_generator) to easy the creation of tf-records. We would also recommend inside the awesome [step-by-step](https://medium.com/@WuStangDan/step-by-step-tensorflow-object-detection-api-tutorial-part-1-selecting-a-model-a02b6aabe39e) guide by Daniel Stang
-
-    2.Staging experiment:
+     * *Staging experiment:*
        1. Install tensorflow [object detection API](https://github.com/tensorflow/models/tree/master/research/object_detection)
        2. Get the pretrained coco weight from [model zoo](https://github.com/tensorflow/models/blob/master/research/object_detection/g3doc/detection_model_zoo.md)
        3. Create a label.pbtxt file to map labels to the class name.
@@ -213,7 +211,7 @@ We ended up using the dataset already created and labeled by [Alex Lechner](http
           5. Change PATH_TO_BE_CONFIGURED placeholders in “input_path” and “label_map_path” to your .record file(s) and label_map.pbtxt
        5. Start Training
 
-    3. Creating Saved Model: In order to serve the model with the Udacity's system, we require the model to be compatible with the tensorlfow==1.3.0 version. A simple way to do this is the checkout the object-detection api branch [1f34fcafc1454e0d31ab4a6cc022102a54ac0f5b](https://github.com/tensorflow/models/tree/1f34fcafc1454e0d31ab4a6cc022102a54ac0f5b/research/object_detection) and export the model graph as a probuff using contents from this branch.
+     * *Creating Saved Model:* In order to serve the model with the Udacity's system, we require the model to be compatible with the tensorlfow==1.3.0 version. A simple way to do this is the checkout the object-detection api branch [1f34fcafc1454e0d31ab4a6cc022102a54ac0f5b](https://github.com/tensorflow/models/tree/1f34fcafc1454e0d31ab4a6cc022102a54ac0f5b/research/object_detection) and export the model graph as a probuff using contents from this branch.
 
        ```bash
        python3 export_inference_graph.py \
