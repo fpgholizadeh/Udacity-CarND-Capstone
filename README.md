@@ -6,7 +6,7 @@
 [image3]: ./img/dbw.png "Generic Description 3" 
 [image4]: ./img/tl.png "Generic Description 4"
 [backbone]: ./img/inception-v2.jpg "Inception-V2 block"
-[prediction]: ./img/red_prediction.jpg "RedLightPrediction"
+[prediction]: ./img/red_prediction.png "RedLightPrediction"
 
 # Capstone Project
 [![Udacity - Self-Driving Car NanoDegree](https://s3.amazonaws.com/udacity-sdc/github/shield-carnd.svg)](http://www.udacity.com/drive)
