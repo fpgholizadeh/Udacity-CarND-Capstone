@@ -1,11 +1,11 @@
 
 [//]: # (Image References)
 
-[image1]: ./img/system.png "Generic Description 1" 
-[image2]: ./img/wp.png "Generic Description 2" 
-[image3]: ./img/dbw.png "Generic Description 3" 
-[image4]: ./img/tl.png "Generic Description 4" 
-[image5]: ./img/ava.png "Generic Description 5" 
+[image1]: ./img/system.png "Generic Description 1"
+[image2]: ./img/wp.png "Generic Description 2"
+[image3]: ./img/dbw.png "Generic Description 3"
+[image4]: ./img/tl.png "Generic Description 4"
+[image5]: ./img/ava.png "Generic Description 5"
 [image6]: ./img/carla.jpg "Generic Description 5"
 
 # Capstone Project
@@ -17,9 +17,9 @@ This repository contains all the code for the final project of Udacity Self Driv
 
 In this project the goal is to write ROS nodes to implement core functionality of the autonomous vehicle system, including traffic light detection, control, and waypoint following.
 
-The code is developed in simulator and then tested on Carla, Udacity's self driving car. 
+The code is developed in simulator and then tested on Carla, Udacity's self driving car.
 
-Carla is a Lincoln MKZ equipped with sensors and actuation and processing unit to drive in the real world. 
+Carla is a Lincoln MKZ equipped with sensors and actuation and processing unit to drive in the real world.
 
 ![alt text][image6]
 
@@ -28,7 +28,7 @@ Carla is a Lincoln MKZ equipped with sensors and actuation and processing unit t
 
 The repo is the result of the collaboration of 4 members, forming the team: CAR-9000.
 
-The team name: CAR-9000 is inspired by 2001: A space odyssey supercomputer [HAL-9000](https://en.wikipedia.org/wiki/HAL_9000). 
+The team name: CAR-9000 is inspired by 2001: A space odyssey supercomputer [HAL-9000](https://en.wikipedia.org/wiki/HAL_9000).
 
 ### Team Members
 
@@ -118,7 +118,7 @@ roslaunch launch/site.launch
 
 ## System Overview
 
-Carla is a Lincoln MKZ equipped with sensors and actuation and processing unit to drive in the real world. 
+Carla is a Lincoln MKZ equipped with sensors and actuation and processing unit to drive in the real world.
 
 The overall software architecture is shown in the image below.
 
@@ -142,10 +142,10 @@ It could be divided in:
   - It answer the question *"Which and where are other objects in the environment?"*
 
 2. **Localization**
-    
+
   - Use sensor and map to understand where the vehicle is
   - It answer the question *"Where is ego vehicle in the world?"*
-  
+
 
 ### Planning subsystem
 
@@ -153,22 +153,22 @@ Given sensor data it has to decide which trajectory to follow
 
 It is divided in 4 subsystems:
 
-1. **Route planner**: 
-  
-  - The route planning component is responsible for high-level decisions about the path of the vehicle between two points on a map; for example which roads, highways, or freeways to take. 
+1. **Route planner**:
+
+  - The route planning component is responsible for high-level decisions about the path of the vehicle between two points on a map; for example which roads, highways, or freeways to take.
   - It answers the question *"How to connect two points on the map?"*
 
-2. **Prediction**: 
+2. **Prediction**:
 
   - The prediction component estimates what actions other objects might take in the future. For example, if another vehicle were identified, the prediction component would estimate its future trajectory.
   - It answers the question *"What other vehicles are going to do?"*
 
-3. **Behavior planning**: 
-  
+3. **Behavior planning**:
+
   - The behavioral planning component determines what behavior the vehicle should exhibit at any point in time. For example stopping at a traffic light or intersection, changing lanes, accelerating, or making a left turn onto a new street are all maneuvers that may be issued by this component.
   - It answers the question *"Which maneuver ego vehicle needs to take?"*
 
-4. **Trajectory generation**: 
+4. **Trajectory generation**:
 
   - Based on the desired immediate behavior, the trajectory planning component will determine which trajectory is best for executing this behavior.
   - It answers the question *"How to generate a trajectory to execute the maneuver?"*
@@ -189,19 +189,19 @@ The image above illustrates the system architecture diagram showing the ROS node
 In addition to the nodes here shown, The repo contains also `styx` and `styx_msgs` packages used to provide a link between the simulator and ROS, and to provide custom ROS message types:
 
 - [styx](./ros/src/styx/)
-  
+
   A package that contains a server for communicating with the simulator, and a bridge to translate and publish simulator messages to ROS topics.
 
 - [styx_msgs](./ros/src/styx_msgs/)
-  
+
   A package which includes definitions of the custom ROS message types used in the project.
 
 - [waypoint_loader](./ros/src/waypoint_loader/)
-  
+
   A package which loads the static waypoint data and publishes to `/base_waypoints`.
 
 - [waypoint_follower](./ros/src/waypoint_follower/)
-  
+
   A package containing code from Autoware which subscribes to `/final_waypoints` and publishes target vehicle linear and angular velocities in the form of twist commands to the `/twist_cmd` topic.
 
 ## Node Design
@@ -224,15 +224,15 @@ The design and implementation details about each of these nodes is provided belo
 
 ![alt text][image2]
 
-The purpose of this node is to update the target velocity property of each waypoint based on traffic light and obstacle detection data. 
+The purpose of this node is to update the target velocity property of each waypoint based on traffic light and obstacle detection data.
 
-This node subscribes to the `/base_waypoints`, `/current_pose`, `/obstacle_waypoint`, and `/traffic_waypoint` topics, and publish a list of waypoints ahead of the car with target velocities to the `/final_waypoints` topic. 
+This node subscribes to the `/base_waypoints`, `/current_pose`, `/obstacle_waypoint`, and `/traffic_waypoint` topics, and publish a list of waypoints ahead of the car with target velocities to the `/final_waypoints` topic.
 
-The core functionality is implemented in class `WaypointUpdater` class of file [`waypoint_updater.py`](./ros/src/waypoint_update/waypoint_updater.py). 
+The core functionality is implemented in class `WaypointUpdater` class of file [`waypoint_updater.py`](./ros/src/waypoint_update/waypoint_updater.py).
 
 In the constructor of this class, publishers and subscribers are registered at **lines 43-56**.
 
-The respective callbacks for all subscribed topics are defined at **lines 136-155**. 
+The respective callbacks for all subscribed topics are defined at **lines 136-155**.
 
 Some callback details are:
 - The waypoints callback stores all the waypoints in [KDTree](https://docs.scipy.org/doc/scipy/reference/generated/scipy.spatial.KDTree.html) structure. This structure has been selected because it is particularly efficient in retrieving spatial nearest neighbors to a given location.
@@ -244,7 +244,7 @@ The function `generate_lane()` is defined at **lines 97-110**. This function imp
 
 1. Find closest waypoint to ego car within all incoming waypoints
 
-  This is implemented in class method `get_closest_waypoint_idx` defined at **lines 69-91**. 
+  This is implemented in class method `get_closest_waypoint_idx` defined at **lines 69-91**.
 
   Here the closest waypoint is found using KDTree class attribute filled in waypoints callback. Then it is checked if closest waypoint is ahead or behind vehicle, by extracting the equation for hyperplane passing through two closest points.
 
@@ -254,16 +254,31 @@ The function `generate_lane()` is defined at **lines 97-110**. This function imp
 
 3. Update velocity of each waypoint basing on incoming traffic lights info
 
-  If no stop is required then the generated lane can be published, otherwise stop deceleration profile is implemented in class method `decelerate_waypoints` defined at **lines 112-134**. 
+  If no stop is required then the generated lane can be published, otherwise stop deceleration profile is implemented in class method `decelerate_waypoints` defined at **lines 112-134**.
 
-  Here the linear deceleration profile is used to updated velocity information associated with each waypoint in front of ego vehicle. The deceleration value follows the value of variable `MAX_DECEL` defined at **line 26**. 
+  Here the linear deceleration profile is used to updated velocity information associated with each waypoint in front of ego vehicle. The deceleration value follows the value of variable `MAX_DECEL` defined at **line 26**.
 
   Two more details here are that we choose to stop a little before the actual stop point incoming from perception in order to stop the car before traffic light line and that the total velocity is always checked to be below maximum allowed speed.
 
 
 ### Control
 
+The control is last node in the self-driving car system. It sends the command to the actuator preset on the vehicle to make it follow the planned trajectories.\
+In the below figure it is possible to see the interface of this node.
+
 ![alt text][image3]
+
+The file [twist_controller.py](./ros/src/twist_controller/twist_controller.py) contains all the logics to fulfill this task.\
+The first check regards the dbw status. This is a fundamental check since it resets the controller when the user takes back the control of the vehicle to drive itself.\
+When the dbw is enabled, this node actuates three different logics to respectively generate the steer, throttle and brake commands.
+#### Steer
+This controller translates the proposed linear and angular velocities into a steering angle based on the vehicle’s steering ratio and wheelbase length.
+To reduce possible jitter from noise in velocity data, the steering angle computed by the controller is also passed through a low pass filter
+#### Throttle
+The throttle is computed using a PID controller that compares the current velocity with the target velocity and adjusts the throttle accordingly.
+#### Brake
+In case of negative speed error or computed throttle command less than 0.1, the throttle command will be set to 0 and a brake command will be computed. The brake controller is a simple computation that takes into consideration the vehicle mass, the wheel radius, as well as the brake_deadband to determine the deceleration force.
+
 
 ### Traffic Recognition
 
@@ -274,7 +289,7 @@ The function `generate_lane()` is defined at **lines 97-110**. This function imp
 ##### Installation
 
 1. Labeling:
-   
+
    * git clone https://github.com/tzutalin/labelImg.git
    * cd labelImg
    * conda create -n py3 python=3.5
@@ -311,10 +326,8 @@ It is also shown the performance of real data replay:
 
 ## Comments
 
-The project has been a great opportunity of collaboration and an exciting experience of running software on real self-driving car! 
+The project has been a great opportunity of collaboration and an exciting experience of running software on real self-driving car!
 
 Our team was organized in two continents (USA and Europe) with 7 hours of time difference! It has been a great opportunity to organize work taking into account this constraint and to collaborate together. All team members have worked intensely and the team met several times to sync and organize tasks.
 
 Such a thrilling experience!
-
-
