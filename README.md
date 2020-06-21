@@ -193,10 +193,10 @@ This node subscribes to the /base_waypoints, /current_pose and /image_color topi
 
 The core functionality for the node is implemented in class TLDetector class of file tl_detector.py. In the constructor of this class, publishers and subscribers are registered at lines 52-58. The core functionality of the traffic_light_classifier that performs the inference on an image can be found at ./ros/tl_detector/light_classification/tl_classifier. In a nutshell, this part of the code loads the model and performs inference on a new image.
 
-Network: To train the model we used TensorFlow object detection API - a framework with several model architecture to train and evaluate object detection task. TensorFlow provides a model zoo pre-trained on various datasets. We decided to use the object detection model pre-trained on the COCO dataset since it already contains the traffic light category and will be helpful for our final model tuning. We use “ssd_inception_v2_coco” to have a good trade-off between computation cost and model efficiency. We use a SSD with the Inception V2 backbone. Inception was originally introduced by Google to reduce the computational complexity of the network while maintaining its efficiency. Central to inception models are the inception blocks where the input feature maps are convoluted with multiple kernels with size 3x3 and 1x1. Having smaller kernels helps the models to the computationally efficient, since smaller kernel requires less Floating-point operations. A typical bounding box models uses predefined anchors to localize objects. Anchors with high score relates to the foreground class (object class) and anchors with low score relates to the background_class. Additionally, most bounding box models are trained to optimize two different losses.
+***Network:*** To train the model we used TensorFlow object detection API - a framework with several model architecture to train and evaluate object detection task. TensorFlow provides a model zoo pre-trained on various datasets. We decided to use the object detection model pre-trained on the COCO dataset since it already contains the traffic light category and will be helpful for our final model tuning. We use “ssd_inception_v2_coco” to have a good trade-off between computation cost and model efficiency. We use a SSD with the Inception V2 backbone. Inception was originally introduced by Google to reduce the computational complexity of the network while maintaining its efficiency. Central to inception models are the inception blocks where the input feature maps are convoluted with multiple kernels with size 3x3 and 1x1. Having smaller kernels helps the models to the computationally efficient, since smaller kernel requires less Floating-point operations. A typical bounding box models uses predefined anchors to localize objects. Anchors with high score relates to the foreground class (object class) and anchors with low score relates to the background_class. Additionally, most bounding box models are trained to optimize two different losses.
 
-   * Classification loss: A simple cross-entropy loss to learn the label of a bounding box
-   * Localization loss: (Regression loss): L1-smooth, GIOU or IOU loss are typically used. In layman terms this loss tend to penalize prediction boxes, if they dont have high overlap with the ground truth.
+   * *Classification loss:* A simple cross-entropy loss to learn the label of a bounding box
+   * *Localization loss:* (Regression loss): L1-smooth, GIOU or IOU loss are typically used. In layman terms this loss tend to penalize prediction boxes, if they dont have high overlap with the ground truth.
 
  ![alt text][backbone]
 
@@ -218,6 +218,12 @@ We ended up using the dataset already created and labeled by [Alex Lechner](http
           4. Change “num_steps” to 10000. Empirically, we found 10000 steps were sufficient for the training to settle.
           5. Change PATH_TO_BE_CONFIGURED placeholders in “input_path” and “label_map_path” to your .record file(s) and label_map.pbtxt
        5. Start Training
+          ```bash
+          python model_main.py \
+                --logtostderr \
+                --model_dir=path_where_to_save_the_model_checkpoints \
+                --pipeline_config_path=path_to_config_file/ssd_inception_v2_coco.config
+          ```
 
    * *Creating Saved Model:* In order to serve the model with the Udacity's system, we require the model to be compatible with the tensorlfow==1.3.0 version. A simple way to do this is the checkout the object-detection api branch [1f34fcafc1454e0d31ab4a6cc022102a54ac0f5b](https://github.com/tensorflow/models/tree/1f34fcafc1454e0d31ab4a6cc022102a54ac0f5b/research/object_detection) and export the model graph as a probuff using contents from this branch.
 
