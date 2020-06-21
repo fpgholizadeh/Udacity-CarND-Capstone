@@ -184,6 +184,8 @@ Specific to these libraries, the simulator grader and Carla use the following:
 ![alt text][image3]
 
 ### Traffic Recognition
+Modling:
+We use a shingle shot detector (SSD) with the Inception V2 backbone. Inception was originally introduced by Google to increase the computational complexity of the network while maintaining a deeper network. Central to inception models are the inception blocks where the input feature maps are convoluted with multiple kernels with size 3x3 and 1x1. Having smaller kernels helps the models to the computationally efficient, since smaller kernel requires less Floating-point operations. Below is a snapshot of a simple inception_v2 block.
 
 ![alt text][image4]
 
