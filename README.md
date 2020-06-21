@@ -189,7 +189,7 @@ Specific to these libraries, the simulator grader and Carla use the following:
 
 ![alt text][image4]
 
-   *Model:* To train the model we used TensorFlow object detection API - a framework with several model architecture to train and evaluate object detection task. TensorFlow provides a model zoo pre-trained on various datasets. We decided to use the object detection model pre-trained on the COCO dataset since it already contains the traffic light category and will be helpful for our final model tuning. We use “ssd_inception_v2_coco” to have a good trade-off between computation cost and model efficiency. We use a SSD with the Inception V2 backbone. Inception was originally introduced by Google to reduce the computational complexity of the network while maintaining its efficiency. Central to inception models are the inception blocks where the input feature maps are convoluted with multiple kernels with size 3x3 and 1x1. Having smaller kernels helps the models to the computationally efficient, since smaller kernel requires less Floating-point operations.
+ To train the model we used TensorFlow object detection API - a framework with several model architecture to train and evaluate object detection task. TensorFlow provides a model zoo pre-trained on various datasets. We decided to use the object detection model pre-trained on the COCO dataset since it already contains the traffic light category and will be helpful for our final model tuning. We use “ssd_inception_v2_coco” to have a good trade-off between computation cost and model efficiency. We use a SSD with the Inception V2 backbone. Inception was originally introduced by Google to reduce the computational complexity of the network while maintaining its efficiency. Central to inception models are the inception blocks where the input feature maps are convoluted with multiple kernels with size 3x3 and 1x1. Having smaller kernels helps the models to the computationally efficient, since smaller kernel requires less Floating-point operations.
 
  ![alt text][backbone]
 
@@ -198,7 +198,8 @@ One can easily run the simulator and take pictures of traffic lights. However, a
 We ended up using the dataset already created and labeled by [Alex Lechner](https://github.com/alex-lechner/Traffic-Light-Classification). Here you can also find step by step guide on how to prepare the data and labels.
 
   *Modeling:* Training can be divided into three major parts.
-     1. Data Preparation: Converting coco-format or XML data to tf-records. We have provided several [parsers](https://github.com/danyz91/CarND-Capstone/tree/master/modeling/data_generator) to easy the creation of tf-records. We would also recommend inside the awesome [step-by-step](https://medium.com/@WuStangDan/step-by-step-tensorflow-object-detection-api-tutorial-part-1-selecting-a-model-a02b6aabe39e) guide by Daniel Stang
+
+    1. Data Preparation: Converting coco-format or XML data to tf-records. We have provided several [parsers](https://github.com/danyz91/CarND-Capstone/tree/master/modeling/data_generator) to easy the creation of tf-records. We would also recommend inside the awesome [step-by-step](https://medium.com/@WuStangDan/step-by-step-tensorflow-object-detection-api-tutorial-part-1-selecting-a-model-a02b6aabe39e) guide by Daniel Stang
 
     2.Staging experiment:
        1. Install tensorflow [object detection API](https://github.com/tensorflow/models/tree/master/research/object_detection)
@@ -212,7 +213,7 @@ We ended up using the dataset already created and labeled by [Alex Lechner](http
           5. Change PATH_TO_BE_CONFIGURED placeholders in “input_path” and “label_map_path” to your .record file(s) and label_map.pbtxt
        5. Start Training
 
-    3. Model Serving: In order to serve the model with the Udacity's system, we require the model to be compatible with the tensorlfow==1.3.0 version. A simple way to do this is the checkout the object-detection api branch [1f34fcafc1454e0d31ab4a6cc022102a54ac0f5b](https://github.com/tensorflow/models/tree/1f34fcafc1454e0d31ab4a6cc022102a54ac0f5b/research/object_detection) and export the model graph as a probuff using contents from this branch.
+    3. Creating Saved Model: In order to serve the model with the Udacity's system, we require the model to be compatible with the tensorlfow==1.3.0 version. A simple way to do this is the checkout the object-detection api branch [1f34fcafc1454e0d31ab4a6cc022102a54ac0f5b](https://github.com/tensorflow/models/tree/1f34fcafc1454e0d31ab4a6cc022102a54ac0f5b/research/object_detection) and export the model graph as a probuff using contents from this branch.
 
        ```bash
        python3 export_inference_graph.py \
@@ -226,7 +227,7 @@ We ended up using the dataset already created and labeled by [Alex Lechner](http
 
   *Deployment* For deployment we simple copy the "frozen_inference_graph.pb" file to our ros directory with the name model_weights and hook the client code into ./ros/tl_detector/light_classification/tl_classifier.py
 
-  ![alt text][backbone]
+  ![alt text][prediction]
 
 
 #### Dataset Annotation
