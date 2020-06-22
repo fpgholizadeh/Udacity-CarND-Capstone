@@ -6,9 +6,9 @@ from modeling.data_generator import pycococreatortools
 from modeling.data_generator.parser import read_image_rgb
 
 # go through each image
-output_path = "/Users/sardhendu/workspace/udacity-nd/ImageDataset/annotated_dataset/simulator_dataset_rgb2/annotation.json"
-image_dir = "/Users/sardhendu/workspace/udacity-nd/ImageDataset/annotated_dataset/simulator_dataset_rgb2/images"
-annotation_file = "/Users/sardhendu/workspace/udacity-nd/ImageDataset/annotated_dataset/simulator_dataset_rgb2/sim_data_annotations.yaml"
+output_path = "path_to/udacity-nd/ImageDataset/annotated_dataset/simulator_dataset_rgb2/annotation.json"
+image_dir = "path_to/udacity-nd/ImageDataset/annotated_dataset/simulator_dataset_rgb2/images"
+annotation_file = "path_to/udacity-nd/ImageDataset/annotated_dataset/simulator_dataset_rgb2/sim_data_annotations.yaml"
 coco_output = {"images": [], "annotations": []}
 coco_output["categories"] = [
     {

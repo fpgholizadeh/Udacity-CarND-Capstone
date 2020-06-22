@@ -135,16 +135,16 @@ def image_meta_dict(image_meta):
 if __name__ == "__main__":
     import numpy as np
     from modeling.data_generator import parser
-    train_output_path = "/Users/sardhendu/workspace/udacity-nd/ImageDataset/annotated_dataset/tf-record-train-0000-0000.record"
-    eval_output_path = "/Users/sardhendu/workspace/udacity-nd/ImageDataset/annotated_dataset/tf-record-eval-0000-0000.record"
+    train_output_path = "path_to/udacity-nd/ImageDataset/annotated_dataset/tf-record-train-0000-0000.record"
+    eval_output_path = "path_to/udacity-nd/ImageDataset/annotated_dataset/tf-record-eval-0000-0000.record"
     image_dirs = [
-        "/Users/sardhendu/workspace/udacity-nd/ImageDataset/annotated_dataset/simulator_dataset_rgb2/images",
-        "/Users/sardhendu/workspace/udacity-nd/ImageDataset/annotated_dataset/simulator_dataset_rgb/images",
+        "path_to/udacity-nd/ImageDataset/annotated_dataset/simulator_dataset_rgb2/images",
+        "path_to/udacity-nd/ImageDataset/annotated_dataset/simulator_dataset_rgb/images",
     ]
 
     annotation_dir = [
-        "/Users/sardhendu/workspace/udacity-nd/ImageDataset/annotated_dataset/simulator_dataset_rgb2/annotation.json",
-        "/Users/sardhendu/workspace/udacity-nd/ImageDataset/annotated_dataset/simulator_dataset_rgb/annotation.json",
+        "path_to/udacity-nd/ImageDataset/annotated_dataset/simulator_dataset_rgb2/annotation.json",
+        "path_to/udacity-nd/ImageDataset/annotated_dataset/simulator_dataset_rgb/annotation.json",
     ]
 
     train_writer = tf.python_io.TFRecordWriter(train_output_path)

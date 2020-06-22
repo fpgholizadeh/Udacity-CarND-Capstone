@@ -117,5 +117,5 @@ def main(prefix_path):
 
 
 if __name__ == "__main__":
-    prefix_path = "/Users/sardhendu/workspace/udacity-nd/ImageDataset/annotated_dataset/simulator_dataset_rgb"
+    prefix_path = "path_to/udacity-nd/ImageDataset/annotated_dataset/simulator_dataset_rgb"
     main(prefix_path)

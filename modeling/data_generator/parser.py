@@ -4,7 +4,7 @@ import numpy as np
 
 from collections import defaultdict
 import json
-low_res_path = "/Users/sardhendu/workspace/udacity-nd/ImageDataset/dataset_lowres"
+low_res_path = "path_to/udacity-nd/ImageDataset/dataset_lowres"
 
 
 # file_paths = [os.path.join(low_res_path, i) for i in os.listdir(low_res_path)]
@@ -141,7 +141,7 @@ def run(data_json_path):
 
 
 if __name__ == "__main__":
-    prefix_path = "/Users/sardhendu/workspace/udacity-nd/ImageDataset/annotated_dataset/simulator_dataset_rgb"
+    prefix_path = "path_to/udacity-nd/ImageDataset/annotated_dataset/simulator_dataset_rgb"
     data_json_path = os.path.join(prefix_path, "annotation.json")
     img_path = os.path.join(prefix_path, "images")
     # run(data_json_path)
