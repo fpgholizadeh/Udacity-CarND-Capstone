@@ -7,6 +7,8 @@
 [image4]: ./img/tl.png "Generic Description 4"
 [image5]: ./img/ava.png "Generic Description 5"
 [image6]: ./img/carla.jpg "Generic Description 5"
+[backbone]: ./img/inception-v2.jpg "Inception-V2 block"
+[prediction]: ./img/red_prediction.png "RedLightPrediction"
 
 # Capstone Project
 [![Udacity - Self-Driving Car NanoDegree](https://s3.amazonaws.com/udacity-sdc/github/shield-carnd.svg)](http://www.udacity.com/drive)
@@ -279,37 +281,74 @@ The throttle is computed using a PID controller that compares the current veloci
 #### Brake
 In case of negative speed error or computed throttle command less than 0.1, the throttle command will be set to 0 and a brake command will be computed. The brake controller is a simple computation that takes into consideration the vehicle mass, the wheel radius, as well as the brake_deadband to determine the deceleration force.
 
-
 ### Traffic Recognition
 
 ![alt text][image4]
 
-#### Dataset Annotation
+This node subscribes to the /base_waypoints, /current_pose and /image_color topics, and publishes the traffic waypoints. The published traffic waypoint can be used to determine the closest traffic and weather to stop/pass the traffic light based on the color.
 
-##### Installation
+The core functionality for the node is implemented in class TLDetector class of file tl_detector.py. In the constructor of this class, publishers and subscribers are registered at lines 52-58. The core functionality of the traffic_light_classifier that performs the inference on an image can be found at ./ros/tl_detector/light_classification/tl_classifier. In a nutshell, this part of the code loads the model and performs inference on a new image.
 
-1. Labeling:
+***Network:*** To train the model we used TensorFlow object detection API - a framework with several model architecture to train and evaluate object detection task. TensorFlow provides a model zoo pre-trained on various datasets. We decided to use the object detection model pre-trained on the COCO dataset since it already contains the traffic light category and will be helpful for our final model tuning. We use “ssd_inception_v2_coco” to have a good trade-off between computation cost and model efficiency. We use a SSD with the Inception V2 backbone. Inception was originally introduced by Google to reduce the computational complexity of the network while maintaining its efficiency. Central to inception models are the inception blocks where the input feature maps are convoluted with multiple kernels with size 3x3 and 1x1. Having smaller kernels helps the models to the computationally efficient, since smaller kernel requires less Floating-point operations. A typical bounding box models uses predefined anchors to localize objects. Anchors with high score relates to the foreground class (object class) and anchors with low score relates to the background_class. Additionally, most bounding box models are trained to optimize two different losses.
 
-   * git clone https://github.com/tzutalin/labelImg.git
-   * cd labelImg
-   * conda create -n py3 python=3.5
-   * conda activate py3
-   * pip install pyqt5==5.13.2 lxml
-   * make qt5py3
-   * python3 labelImg.py [IMAGE_PATH] [PRE-DEFINED CLASS FILE]
+   * *Classification loss:* A simple cross-entropy loss to learn the label of a bounding box
+   * *Localization loss:* (Regression loss): L1-smooth, GIOU or IOU loss are typically used. In layman terms this loss tend to penalize prediction boxes, if they dont have high overlap with the ground truth.
 
+ ![alt text][backbone]
 
-2. Modeline:
-   * scikit-image
-   *
+***Dataset:*** To perform the training, we need to gather reasonable amount of traffic light images from both the simulator and ROSbag file from Carla. One can easily run the simulator and take pictures of traffic lights. However, after taking the pictures, they all need to be labeled. The recommended labeling tool is labellmg.
+We ended up using the dataset already created and labeled by [Alex Lechner](https://github.com/alex-lechner/Traffic-Light-Classification). Here you can also find step by step guide on how to prepare the data and labels.
 
+***Modeling:*** Training can be divided into three major parts.
+
+   * *Data Preparation:* Converting coco-format or XML data to tf-records. We have provided several [parsers](https://github.com/danyz91/CarND-Capstone/tree/master/modeling/data_generator) to easy the creation of tf-records. We would also recommend inside the awesome [step-by-step](https://medium.com/@WuStangDan/step-by-step-tensorflow-object-detection-api-tutorial-part-1-selecting-a-model-a02b6aabe39e) guide by Daniel Stang
+
+   * *Staging experiment:*
+       1. Install tensorflow [object detection API](https://github.com/tensorflow/models/tree/master/research/object_detection)
+       2. Get the pretrained coco weight from [model zoo](https://github.com/tensorflow/models/blob/master/research/object_detection/g3doc/detection_model_zoo.md)
+       3. Create a label.pbtxt file to map labels to the class name.
+       4. Get the model [config](https://github.com/tensorflow/models/blob/master/research/object_detection/samples/configs/ssd_inception_v2_coco.config) and update the following
+          1. Change “num_classes” to the number of classes we have, here would be 4 (Red, Yellow, Green, Unknown)
+          2. Change “max_detections_per_class” and “max_total_detections” to lower values such as 10-15.
+          3. The fine_tune_checkpoint: "PATH_TO_BE_CONFIGURED/model.ckpt" need to be changed to the directory where you downloaded the model
+          4. Change “num_steps” to 10000. Empirically, we found 10000 steps were sufficient for the training to settle.
+          5. Change PATH_TO_BE_CONFIGURED placeholders in “input_path” and “label_map_path” to your .record file(s) and label_map.pbtxt
+       5. Start Training
+          ```bash
+          python model_main.py \
+                --logtostderr \
+                --model_dir=path_where_to_save_the_model_checkpoints \
+                --pipeline_config_path=path_to_config_file/ssd_inception_v2_coco.config
+          ```
+
+   * *Creating Saved Model:* In order to serve the model with the Udacity's system, we require the model to be compatible with the tensorlfow==1.3.0 version. A simple way to do this is the checkout the object-detection api branch [1f34fcafc1454e0d31ab4a6cc022102a54ac0f5b](https://github.com/tensorflow/models/tree/1f34fcafc1454e0d31ab4a6cc022102a54ac0f5b/research/object_detection) and export the model graph as a probuff using contents from this branch.
+
+       ```bash
+       python3 export_inference_graph.py \
+            --input_type image_tensor \
+            --pipeline_config_path training/ssd_inception_v2_coco.pbtxt  \
+            --trained_checkpoint_prefix training/model.ckpt-10000 \
+            --output_directory YOUR_OUTPUT_PATH/YOUR_OUTPUT_NAME
+       ```
+
+       The above snippet creates a saved_model called as "frozen_inference_graph.pb" which contains both the weights and the model_graph.
+
+  *Deployment* For deployment we simple copy the "frozen_inference_graph.pb" file to our ros directory with the name model_weights and hook the client code into ./ros/tl_detector/light_classification/tl_classifier.py
+
+  ![alt text][prediction]
 
 #### References:
 
-- Labeling: https://github.com/tzutalin/labelImg
-- Voc to Coco converter: https://github.com/roboflow-ai/voc2coco
-- Custom Data to Coco: https://github.com/waspinator/pycococreator
-- Modeling: https://github.com/fizyr/keras-retinanet
+- [Labeling](https://github.com/tzutalin/labelImg)
+- [Voc to Coco converter](https://github.com/roboflow-ai/voc2coco)
+- [Custom Data to Coco](https://github.com/waspinator/pycococreator)
+- [Modeling](https://github.com/tensorflow/models)
+- Training:
+   * https://github.com/alex-lechner/Traffic-Light-Classification
+   * https://towardsdatascience.com/detailed-tutorial-build-your-custom-real-time-object-detector-5ade1017fd2d
+   * https://medium.com/@WuStangDan/step-by-step-tensorflow-object-detection-api-tutorial-part-1-selecting-a-model-a02b6aabe39e
+
+- [Making Tensorflow 1.3.0 compatible](https://stackoverflow.com/questions/53927700/how-to-use-object-detection-api-with-an-old-version-of-tensorflow-v1-3-0)
 
 ## Results
 
