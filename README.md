@@ -241,20 +241,6 @@ We ended up using the dataset already created and labeled by [Alex Lechner](http
 
   ![alt text][prediction]
 
-
-#### Dataset Annotation
-
-##### Installation
-
-1. Labeling:
-   * git clone https://github.com/tzutalin/labelImg.git
-   * cd labelImg
-   * conda create -n py3 python=3.5
-   * conda activate py3
-   * pip install pyqt5==5.13.2 lxml
-   * make qt5py3
-   * python3 labelImg.py [IMAGE_PATH] [PRE-DEFINED CLASS FILE]
-
 #### References:
 
 - [Labeling](https://github.com/tzutalin/labelImg)
