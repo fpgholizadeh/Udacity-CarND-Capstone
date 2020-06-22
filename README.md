@@ -350,3 +350,23 @@ We ended up using the dataset already created and labeled by [Alex Lechner](http
 
 - [Making Tensorflow 1.3.0 compatible](https://stackoverflow.com/questions/53927700/how-to-use-object-detection-api-with-an-old-version-of-tensorflow-v1-3-0)
 
+## Results
+
+The result of the developed system is shown in the video below
+
+**SIMULATOR VIDEO HERE**
+
+The car is able to follow lane in the simulator and to stop when traffic light is red. It is also shown how the car  starts again when the green traffic light is detected.
+
+It is also shown the performance of real data replay:
+
+**REAL DATA VIDEO HERE**
+
+
+## Comments
+
+The project has been a great opportunity of collaboration and an exciting experience of running software on real self-driving car!
+
+Our team was organized in two continents (USA and Europe) with 7 hours of time difference! It has been a great opportunity to organize work taking into account this constraint and to collaborate together. All team members have worked intensely and the team met several times to sync and organize tasks.
+
+Such a thrilling experience!
