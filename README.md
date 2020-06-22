@@ -354,13 +354,11 @@ We ended up using the dataset already created and labeled by [Alex Lechner](http
 
 The result of the developed system is shown in the video below
 
-**SIMULATOR VIDEO HERE**
 
-The car is able to follow lane in the simulator and to stop when traffic light is red. It is also shown how the car  starts again when the green traffic light is detected.
+[![final](https://img.youtube.com/vi/I_qdVxc1Ay4/0.jpg)](https://www.youtube.com/watch?v=I_qdVxc1Ay4) 
 
-It is also shown the performance of real data replay:
+The car is able to follow lane in the simulator and to stop when traffic light is red. It is also shown how the car  starts again when the green traffic light is detected. When the car approaches the second traffic light, it does not come to a full stop since the traffic light is correctly classificated as green.
 
-**REAL DATA VIDEO HERE**
 
 
 ## Comments
