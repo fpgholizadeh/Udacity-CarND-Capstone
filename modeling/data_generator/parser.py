@@ -14,7 +14,7 @@ color_dict = {
     "Yellow": (128, 128, 128),
     "Unknown": (255, 255, 255),
 }
-label_id_map = {0: "Red", 1: "Yellow", 2: "Green", 3: "Unknown"}
+label_id_map = {0: "Unknown", 1: "Red", 2: "Yellow", 3: "Green"}
 
 
 def read_image_rgb(img_path):

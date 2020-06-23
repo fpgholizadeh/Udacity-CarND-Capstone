@@ -7,7 +7,7 @@ from modeling.data_generator.parser import label_id_map
 
 class TrafficLightClassifier(object):
     def __init__(self):
-        PATH_TO_MODEL = "./modeling/model_weights.pb"
+        PATH_TO_MODEL = "./ros/model_weights.pb"
         self.detection_graph = tf.Graph()
         with self.detection_graph.as_default():
             od_graph_def = tf.GraphDef()
@@ -113,7 +113,10 @@ if __name__ == "__main__":
 
     debug = True
     obj_classifier = TrafficLightClassifier()
-    prefix = "/Users/sardhendu/workspace/udacity-nd/ImageDataset/annotated_dataset/simulator_dataset_rgb2/images"
+    prefix = "path_to_data/images_real"
+    out_path = "path_to_output/000_real_world"
+    if not os.path.exists(out_path):
+        os.makedirs(out_path)
     for num_, path_ in enumerate(os.listdir(prefix)):
         if path_.endswith("jpg") or path_.endswith("png"):
             full_path = os.path.join(prefix, path_)
@@ -123,6 +126,6 @@ if __name__ == "__main__":
             print("image_name", path_, "color: ", color)
 
             parser.write_image_rgb(
-                img, "./data/" + path_)
-            if num_ == 2:
+                img, os.path.join(out_path,  path_))
+            if num_ == 20:
                 break
