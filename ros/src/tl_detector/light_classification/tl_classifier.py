@@ -4,7 +4,7 @@ import tensorflow as tf
 import numpy as np
 from collections import Counter
 
-label_id_map = {0: "Red", 1: "Yellow", 2: "Green", 3: "Unknown"}
+label_id_map = {0: "Unknown", 1: "Red", 2: "Yellow", 3: "Green", }
 
 
 class TLClassifier(object):

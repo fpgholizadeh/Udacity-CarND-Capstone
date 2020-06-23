@@ -311,7 +311,7 @@ We ended up using the dataset already created and labeled by [Alex Lechner](http
           1. Change “num_classes” to the number of classes we have, here would be 4 (Red, Yellow, Green, Unknown)
           2. Change “max_detections_per_class” and “max_total_detections” to lower values such as 10-15.
           3. The fine_tune_checkpoint: "PATH_TO_BE_CONFIGURED/model.ckpt" need to be changed to the directory where you downloaded the model
-          4. Change “num_steps” to 10000. Empirically, we found 10000 steps were sufficient for the training to settle.
+          4. Change “num_steps” to 5000. Empirically, we found 5000 steps were sufficient for the training to settle.
           5. Change PATH_TO_BE_CONFIGURED placeholders in “input_path” and “label_map_path” to your .record file(s) and label_map.pbtxt
        5. Start Training
           ```bash
@@ -324,11 +324,16 @@ We ended up using the dataset already created and labeled by [Alex Lechner](http
    * *Creating Saved Model:* In order to serve the model with the Udacity's system, we require the model to be compatible with the tensorlfow==1.3.0 version. A simple way to do this is the checkout the object-detection api branch [1f34fcafc1454e0d31ab4a6cc022102a54ac0f5b](https://github.com/tensorflow/models/tree/1f34fcafc1454e0d31ab4a6cc022102a54ac0f5b/research/object_detection) and export the model graph as a probuff using contents from this branch.
 
        ```bash
-       python3 export_inference_graph.py \
-            --input_type image_tensor \
-            --pipeline_config_path training/ssd_inception_v2_coco.pbtxt  \
-            --trained_checkpoint_prefix training/model.ckpt-10000 \
-            --output_directory YOUR_OUTPUT_PATH/YOUR_OUTPUT_NAME
+       python export_inference_graph.py \
+        --input_type image_tensor \
+        --pipeline_config_path=PATH_TO_/ssd_inception_v2_coco.pbtxt\
+        --trained_checkpoint_prefix CHECKPOINT/model.ckpt-4200 \
+        --output_directory  OUTPUT_FORZEN_MODEL_DIR
+
+        # Some changes to avoid errors
+        1. comment line 96-98
+        2. ./builders/model_builder: batch_norm_trainable: False #feature_extractor_config.batch_norm_trainable
+        3. Change object_detection/exporter line 71 to rewrite_options = rewriter_config_pb2.RewriterConfig()
        ```
 
        The above snippet creates a saved_model called as "frozen_inference_graph.pb" which contains both the weights and the model_graph.
