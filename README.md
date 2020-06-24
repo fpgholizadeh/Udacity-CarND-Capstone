@@ -9,6 +9,8 @@
 [image6]: ./img/carla.jpg "Generic Description 5"
 [backbone]: ./img/inception-v2.jpg "Inception-V2 block"
 [prediction]: ./img/red_prediction.png "RedLightPrediction"
+[prediction_real_green]: ./img/left0048.jpg "Real World Green Light Prediction"
+[prediction_real_red]: ./img/left0461.jpg "Real World Red Light Prediction"
 
 # Capstone Project
 [![Udacity - Self-Driving Car NanoDegree](https://s3.amazonaws.com/udacity-sdc/github/shield-carnd.svg)](http://www.udacity.com/drive)
@@ -341,6 +343,7 @@ We ended up using the dataset already created and labeled by [Alex Lechner](http
   *Deployment* For deployment we simple copy the "frozen_inference_graph.pb" file to our ros directory with the name model_weights and hook the client code into ./ros/tl_detector/light_classification/tl_classifier.py
 
   ![alt text][prediction]
+  ![alt text][prediction_real_green] ![alt text][prediction_real_red]
 
 #### References:
 
@@ -362,7 +365,7 @@ The result of the developed system is shown in the video below
 
 [![final](https://img.youtube.com/vi/I_qdVxc1Ay4/0.jpg)](https://www.youtube.com/watch?v=I_qdVxc1Ay4) 
 
-The car is able to follow lane in the simulator and to stop when traffic light is red. It is also shown how the car  starts again when the green traffic light is detected. When the car approaches the second traffic light, it does not come to a full stop since the traffic light is correctly classificated as green.
+The car is able to follow lane in the simulator and to stop when traffic light is red. It is also shown how the car  starts again when the green traffic light is detected. When the car approaches the second traffic light, it does not come to a full stop since the traffic light is correctly classified as green.
 
 
 

@@ -113,8 +113,8 @@ if __name__ == "__main__":
 
     debug = True
     obj_classifier = TrafficLightClassifier()
-    prefix = "path_to_data/images_real"
-    out_path = "path_to_output/000_real_world"
+    prefix = "/Users/sardhendu/workspace/udacity-nd/ImageDataset/annotated_dataset/simulator_dataset_rgb2/data/images_real"
+    out_path = "/Users/sardhendu/000_real_world"
     if not os.path.exists(out_path):
         os.makedirs(out_path)
     for num_, path_ in enumerate(os.listdir(prefix)):
@@ -127,5 +127,5 @@ if __name__ == "__main__":
 
             parser.write_image_rgb(
                 img, os.path.join(out_path,  path_))
-            if num_ == 20:
+            if num_ == 100:
                 break

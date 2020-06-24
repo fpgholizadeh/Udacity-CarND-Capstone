@@ -4,7 +4,7 @@ import tensorflow as tf
 import numpy as np
 from collections import Counter
 
-label_id_map = {0: "Unknown", 1: "Red", 2: "Yellow", 3: "Green", }
+label_id_map = {0: "Unknown", 1: "Red", 2: "Yellow", 3: "Green"}
 
 
 class TLClassifier(object):
@@ -84,11 +84,15 @@ class TLClassifier(object):
             img = self.make_plots(img, boxes, classes)
 
         if len(traffic_light_color) == 0:
+            print("[COLOR] = UNKNOWN")
             return TrafficLight.UNKNOWN
         elif "Red" in traffic_light_color:
+            print("[COLOR] = RED")
             return TrafficLight.RED
         else:
             if traffic_light_color[0] == "Green":
+                print("[COLOR] = GREEN")
                 return TrafficLight.GREEN
             else:
+                print("[COLOR] = YELLOW")
                 return TrafficLight.YELLOW
